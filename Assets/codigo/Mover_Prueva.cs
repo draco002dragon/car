@@ -4,15 +4,27 @@ using UnityEngine;
 
 public class Mover_Prueva : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public float veloz = 10f;
+    public float ja = 100f;
+    private Rigidbody rb;
+
     void Start()
     {
         
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        float moveInput = Input.GetAxis("Vertical");
+        float turnInput = Input.GetAxis("Horizontal");
+
+
+        Vector3 move = transform.forward * moveInput * veloz * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + move);
+
+        float turn = turnInput * ja * Time.fixedDeltaTime;
+        Quaternion rotation = Quaternion.Euler(0, turn, 0);
+        rb.MoveRotation(rb.rotation * rotation);
     }
 }

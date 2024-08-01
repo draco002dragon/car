@@ -4,40 +4,76 @@ using UnityEngine;
 
 public class enemigo : MonoBehaviour
 {
-    public float speed = 5f; // Velocidad del NPC
-    public Transform[] waypoints; // Puntos de control para que el NPC siga
-    private int currentWaypointIndex = 0; // Índice del punto de control actual
+    public float speed = 5f; 
+    public Transform[] waypoints; 
+    private int currentWaypointIndex = 0;
+    public GameObject[] enemies; // Lista de enemigos a spawnear
+    public Transform spawnPoint;  // Punto donde aparecerÃ¡ el enemigo
+
+    void Start()
+    {
+        SpawnEnemy();
+    }
+
+    void SpawnEnemy()
+    {
+       
+        int randomIndex = Random.Range(0, enemies.Length);
+        GameObject enemy = Instantiate(enemies[randomIndex], spawnPoint.position, spawnPoint.rotation);
+        // AquÃ­ puedes agregar lÃ³gica adicional si es necesario, como configurar el enemigo
+
+
+          if (waypoints.Length == 0) return;
+
+       
+        Vector3 direction = waypoints[currentWaypointIndex].position - transform.position;
+        transform.position += direction.normalized * speed * Time.deltaTime;
+
+       
+        if (direction.magnitude < 0.1f)
+        {
+            currentWaypointIndex++;
+
+            
+            if (currentWaypointIndex >= waypoints.Length)
+            {
+                currentWaypointIndex = 0; 
+            }
+        }
+       
+
+    }
 
     private void Update()
-    {
+   {
         MoveTowardsWaypoint();
     }
 
     private void MoveTowardsWaypoint()
     {
-        // Verifica si hay puntos de control asignados
+       
         if (waypoints.Length == 0) return;
 
-        // Determina la dirección hacia el siguiente punto de control
+       
         Vector3 direction = waypoints[currentWaypointIndex].position - transform.position;
         transform.position += direction.normalized * speed * Time.deltaTime;
 
-        // Comprueba si el NPC ha llegado al punto de control
+       
         if (direction.magnitude < 0.1f)
         {
             currentWaypointIndex++;
 
-            // Si se han alcanzado todos los puntos de control, reinicia
+            
             if (currentWaypointIndex >= waypoints.Length)
             {
-                currentWaypointIndex = 0; // Reiniciar al primer punto
+                currentWaypointIndex = 0; 
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Aquí podrías añadir lógica para que el NPC reaccione con el jugador o con otros objetos
+        
         if (other.CompareTag("Player"))
         {
             Debug.Log("El NPC ha alcanzado al jugador!");
